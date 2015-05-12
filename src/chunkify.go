@@ -10,7 +10,7 @@ import (
 
 var (
 	KB            = 1024
-	BytesPerBlock = 4 * KB
+	BytesPerChunk = 256 * KB
 )
 
 type chunk struct {
@@ -24,6 +24,8 @@ type Shadow struct {
 	size     int
 	checksum string
 }
+
+func noop() {}
 
 func md5Checksum(bst []byte) string {
 	return fmt.Sprintf("%x", md5.Sum(bst))
@@ -53,12 +55,21 @@ func chunkFile(blobAt string) (ckl chan *chunk, err error) {
 		return
 	}
 
+	fhClose := func() {
+		fh.Close()
+	}
+
+	return chunkChaner(fh, fhClose)
+}
+
+func chunkChaner(fh io.Reader, deferal func()) (ckl chan *chunk, err error) {
 	ckl = make(chan *chunk)
+
 	go func() {
-		defer fh.Close()
+		defer deferal()
 		i := uint(0)
 		for {
-			bts := make([]byte, BytesPerBlock)
+			bts := make([]byte, BytesPerChunk)
 			n, err := io.ReadAtLeast(fh, bts, 1)
 
 			if err != nil {
