@@ -118,3 +118,17 @@ func checksumChanify(blobAt string) (chan *Shadow, error) {
 
 	return ckll, nil
 }
+
+func Chunkify(blobAt string) (map[uint]*Shadow, error) {
+	chunkChan, err := checksumChanify(blobAt)
+	if err != nil {
+		return nil, err
+	}
+
+	results := make(map[uint]*Shadow)
+	for shad := range chunkChan {
+		results[shad.id] = shad
+	}
+
+	return results, nil
+}
