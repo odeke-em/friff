@@ -103,10 +103,10 @@ func checksumChanify(blobAt string) (chan *Shadow, error) {
 		chanOChan := make(chan chan *Shadow)
 
 		go func() {
+			defer close(chanOChan)
 			for cch := range ckl {
 				chanOChan <- cch.compute()
 			}
-			close(chanOChan)
 		}()
 
 		for cksumChan := range chanOChan {
