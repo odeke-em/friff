@@ -30,6 +30,8 @@ func main() {
 	deletions := diff.Deletions
 	insertions := diff.Insertions
 
+	fmt.Println("original", diff.Original)
+
 	for _, del := range deletions {
 		fmt.Println("deletions", del)
 	}

@@ -6,6 +6,8 @@ import (
 	"sync"
 )
 
+var moveMu sync.Mutex
+
 type Part struct {
 	src  map[uint]*Shadow
 	dest map[uint]*Shadow
@@ -14,6 +16,7 @@ type Part struct {
 type Diff struct {
 	Deletions  []*Shadow
 	Insertions []*Shadow
+	Original   map[uint]*Shadow
 }
 
 func MergePaths(left, right string) *Part {
@@ -43,9 +46,30 @@ func MergePaths(left, right string) *Part {
 	}
 }
 
+func MergeShow(p *Part) string {
+	// l, r := p.left, p.right
+	// TODO: Join up missing chunks
+	return ""
+}
+
+func move(key uint, from, to map[uint]*Shadow) {
+	moveMu.Lock()
+	defer moveMu.Unlock()
+
+	retr, ok := from[key]
+	if !ok {
+		return
+	}
+
+	to[key] = retr
+	delete(from, key)
+}
+
 func (pt *Part) Merge() *Diff {
 	src := pt.src
 	dest := pt.dest
+
+	untouched := make(map[uint]*Shadow)
 
 	var deletions, insertions []*Shadow
 	for srcId, srcShad := range src {
@@ -55,7 +79,7 @@ func (pt *Part) Merge() *Diff {
 			continue
 		}
 		if destShad.checksum == srcShad.checksum {
-			delete(dest, srcId)
+			move(srcId, dest, untouched) // delete(dest, srcId)
 			continue
 		}
 
@@ -69,5 +93,6 @@ func (pt *Part) Merge() *Diff {
 	return &Diff{
 		Deletions:  deletions,
 		Insertions: insertions,
+		Original:   untouched,
 	}
 }

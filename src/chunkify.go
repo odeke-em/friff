@@ -10,7 +10,7 @@ import (
 
 var (
 	KB            = 1024
-	BytesPerChunk = 256 * KB
+	BytesPerChunk = 4 * KB
 )
 
 type chunk struct {
@@ -112,6 +112,8 @@ func checksumChanify(blobAt string) (chan *Shadow, error) {
 		for cksumChan := range chanOChan {
 			cksum := <-cksumChan
 			ckll <- cksum
+
+			fmt.Println("cksum", cksum)
 		}
 		close(ckll)
 	}()
