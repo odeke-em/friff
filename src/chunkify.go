@@ -1,4 +1,4 @@
-package merkle
+package friff
 
 import (
 	"crypto/md5"
@@ -10,7 +10,7 @@ import (
 
 var (
 	KB            = 1024
-	BytesPerChunk = 4 * KB
+	BytesPerChunk = 256 * KB
 )
 
 type chunk struct {
@@ -113,7 +113,7 @@ func checksumChanify(blobAt string) (chan *Shadow, error) {
 			cksum := <-cksumChan
 			ckll <- cksum
 
-			fmt.Println("cksum", cksum)
+			// fmt.Println("cksum", cksum)
 		}
 		close(ckll)
 	}()

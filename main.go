@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	merkle "github.com/odeke-em/go-merkle/src"
+	friff "github.com/odeke-em/friff/src"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 		right = rest[1]
 	}
 
-	pt := merkle.MergePaths(left, right)
+	pt := friff.MergePaths(left, right)
 	diff := pt.Merge()
 	deletions := diff.Deletions
 	insertions := diff.Insertions
