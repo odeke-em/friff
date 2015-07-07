@@ -66,7 +66,11 @@ func chunkChaner(fh io.Reader, deferal func()) (ckl chan *chunk, err error) {
 	ckl = make(chan *chunk)
 
 	go func() {
-		defer deferal()
+		defer func() {
+			close(ckl)
+			deferal()
+		}()
+
 		i := uint(0)
 		for {
 			bts := make([]byte, BytesPerChunk)
@@ -86,7 +90,6 @@ func chunkChaner(fh io.Reader, deferal func()) (ckl chan *chunk, err error) {
 			ckl <- &chunk{id: i, data: bts, n: n}
 			i += 1
 		}
-		close(ckl)
 	}()
 
 	return
