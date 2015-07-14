@@ -20,15 +20,27 @@ type chunk struct {
 }
 
 type Shadow struct {
-	id       uint
-	size     int
-	checksum string
+	id       uint   `json:"id"`
+	size     int    `json:"size"`
+	checksum string `json:"checksum"`
 }
 
 func noop() {}
 
 func md5Checksum(bst []byte) string {
 	return fmt.Sprintf("%x", md5.Sum(bst))
+}
+
+func (s *Shadow) Id() uint {
+	return s.id
+}
+
+func (s *Shadow) Size() int {
+	return s.size
+}
+
+func (s *Shadow) Checksum() string {
+	return s.checksum
 }
 
 func (ck *chunk) compute() chan *Shadow {

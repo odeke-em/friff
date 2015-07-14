@@ -9,11 +9,15 @@ import (
 var moveMu sync.Mutex
 
 type Part struct {
-	src  map[uint]*Shadow
-	dest map[uint]*Shadow
+	srcPath  string
+	destPath string
+	src      map[uint]*Shadow
+	dest     map[uint]*Shadow
 }
 
 type Diff struct {
+    SrcPath string
+    DestPath string
 	Deletions  []*Shadow
 	Insertions []*Shadow
 	Original   map[uint]*Shadow
@@ -41,9 +45,15 @@ func MergePaths(left, right string) *Part {
 	wg.Wait()
 
 	return &Part{
-		src:  lShad,
-		dest: rShad,
+		srcPath:  left,
+		destPath: right,
+		src:      lShad,
+		dest:     rShad,
 	}
+}
+
+func Reconstruct(from, to string) {
+	// part := MergePaths(from, to)
 }
 
 func MergeShow(p *Part) string {
@@ -91,6 +101,8 @@ func (pt *Part) Merge() *Diff {
 	}
 
 	return &Diff{
+		SrcPath:    pt.srcPath,
+		DestPath:    pt.destPath,
 		Deletions:  deletions,
 		Insertions: insertions,
 		Original:   untouched,
