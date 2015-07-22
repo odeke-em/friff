@@ -16,8 +16,8 @@ type Part struct {
 }
 
 type Diff struct {
-    SrcPath string
-    DestPath string
+	SrcPath    string
+	DestPath   string
 	Deletions  []*Shadow
 	Insertions []*Shadow
 	Original   map[uint]*Shadow
@@ -88,7 +88,7 @@ func (pt *Part) Merge() *Diff {
 			deletions = append(deletions, srcShad)
 			continue
 		}
-		if destShad.checksum == srcShad.checksum {
+		if destShad.Checksum == srcShad.Checksum {
 			move(srcId, dest, untouched) // delete(dest, srcId)
 			continue
 		}
@@ -102,7 +102,7 @@ func (pt *Part) Merge() *Diff {
 
 	return &Diff{
 		SrcPath:    pt.srcPath,
-		DestPath:    pt.destPath,
+		DestPath:   pt.destPath,
 		Deletions:  deletions,
 		Insertions: insertions,
 		Original:   untouched,

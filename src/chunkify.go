@@ -20,9 +20,9 @@ type chunk struct {
 }
 
 type Shadow struct {
-	id       uint   `json:"id"`
-	size     int    `json:"size"`
-	checksum string `json:"checksum"`
+	Id       uint   `json:"id"`
+	Size     int    `json:"size"`
+	Checksum string `json:"checksum"`
 }
 
 func noop() {}
@@ -31,26 +31,14 @@ func md5Checksum(bst []byte) string {
 	return fmt.Sprintf("%x", md5.Sum(bst))
 }
 
-func (s *Shadow) Id() uint {
-	return s.id
-}
-
-func (s *Shadow) Size() int {
-	return s.size
-}
-
-func (s *Shadow) Checksum() string {
-	return s.checksum
-}
-
 func (ck *chunk) compute() chan *Shadow {
 	done := make(chan *Shadow)
 
 	go func() {
 		shad := Shadow{
-			id:       ck.id,
-			size:     ck.n,
-			checksum: md5Checksum(ck.data),
+			Id:       ck.id,
+			Size:     ck.n,
+			Checksum: md5Checksum(ck.data),
 		}
 
 		done <- &shad
@@ -144,7 +132,7 @@ func Chunkify(blobAt string) (map[uint]*Shadow, error) {
 
 	results := make(map[uint]*Shadow)
 	for shad := range chunkChan {
-		results[shad.id] = shad
+		results[shad.Id] = shad
 	}
 
 	return results, nil
